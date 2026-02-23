@@ -31,7 +31,7 @@ For each changed file, evaluate:
    - Are dependencies flowing in the correct direction?
    - Is the repository pattern used for data access?
 
-2. **C# Best Practices**
+2. **.NET Best Practices**
    - Async/await used correctly for I/O operations
    - Dependency injection used (no `new` for services)
    - Proper null handling (nullable reference types)
