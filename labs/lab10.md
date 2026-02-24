@@ -7,18 +7,18 @@ In this lab you will learn how Copilot understands your codebase (reindex), when
 References:
 - [Repository indexing](https://docs.github.com/en/copilot/concepts/context/repository-indexing)
 - [Memory MCP server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
-- [MCP specification](https://spec.modelcontextprotocol.io/)
+- [MCP specification](https://modelcontextprotocol.io/specification)
 - [Copilot CLI docs](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli)
 
 ## 10.0 Reindex: How Copilot Understands Your Code
 
 Before we talk about Memory MCP, let's understand what Copilot **already knows** about your codebase — without any extra configuration.
 
-Copilot automatically builds a **semantic index** of your repository. This isn't keyword search — it's a meaning-based understanding of your code's structure, types, relationships, and patterns. This is called **reindex**.
+Copilot automatically builds a **semantic index** of your repository. This isn't keyword search — it's a meaning-based understanding of your code's structure, types, relationships, and patterns. GitHub officially calls this **repository indexing** (you may also hear it called "reindex" informally).
 
 | Feature | Details |
 |---------|---------|
-| **Speed** | Near-instant (seconds, even for large repos) |
+| **Speed** | Re-indexing is near-instant (seconds); initial indexing may take up to 60s for large repos |
 | **How it works** | Builds a semantic index when you open the repo; refreshes as you edit |
 | **What it understands** | Function purpose, type relationships, call hierarchies, patterns |
 | **Available on** | All Copilot tiers — no limits on repos indexed |
@@ -340,7 +340,7 @@ We covered reindex in section 10.0 — Copilot builds a **meaning-based index** 
 
 When you ask *"How does authentication work in this project?"*, Copilot uses semantic search — it finds relevant code by **meaning**, not by grepping for the word "auth".
 
-### GitHub MCP: Remote Semantic Search
+### GitHub MCP: Remote Code Search
 
 The built-in GitHub MCP server extends this to **remote repositories**:
 
@@ -348,7 +348,7 @@ The built-in GitHub MCP server extends this to **remote repositories**:
 Search the GitHub repo dotnet/aspnetcore for how middleware pipeline ordering works
 ```
 
-Copilot can semantically search any GitHub repo you have access to — without cloning it. This is powerful for:
+Copilot can search any GitHub repo you have access to — without cloning it — using GitHub's code search capabilities via MCP tools. This is powerful for:
 - Understanding upstream dependencies
 - Finding examples in open-source projects
 - Scanning organization repos for patterns or security issues
@@ -365,11 +365,13 @@ Copilot CLI can spawn **specialized sub-agents** that run in parallel:
 | `code-review` | High signal-to-noise code review | Sonnet |
 
 ```bash
-# Enable parallel agent execution
+# Enable parallel agent execution (experimental — may not appear in official docs)
 /fleet
 ```
 
 With `/fleet` mode, multiple sub-agents work simultaneously — one explores the codebase while another runs tests while a third reviews changes. This is what makes complex workflows fast.
+
+> ⚠️ **Note:** `/fleet` is an experimental feature and may not be listed in the official CLI command reference yet.
 
 ### Autopilot Mode
 
