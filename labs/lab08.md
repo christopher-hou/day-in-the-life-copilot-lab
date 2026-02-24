@@ -139,15 +139,18 @@ jobs:
 
 gh-aw workflows use the Copilot CLI as their AI engine. To authenticate, you need a **fine-grained Personal Access Token (PAT)** stored as a repository secret.
 
+> ⚠️ **Security note — PATs in production.** GitHub [recommends GitHub Apps over PATs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#keeping-your-personal-access-tokens-secure) for production CI/CD workflows because Apps use short-lived, auto-revoked tokens scoped to specific installations. However, **gh-aw currently requires a PAT for Copilot engine authentication** — GitHub App auth is supported for other gh-aw operations (tool access, safe outputs) but [not yet for `COPILOT_GITHUB_TOKEN`](https://github.github.io/gh-aw/reference/auth/#using-a-github-app-for-authentication). We use a fine-grained PAT in this workshop for convenience. For production deployments, follow the best practices below and monitor gh-aw releases for GitHub App support.
+
 ### Create the PAT
 
 🌐 **On GitHub:**
 
 1. Go to [**Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens**](https://github.com/settings/personal-access-tokens/new)
-2. Give it a name (e.g., `gh-aw-copilot`)
-3. Under **Repository access**, select **Public repositories** (required for the Copilot Requests permission to appear — this works for private repos too)
-4. Click **Permissions** → **Account permissions** → find **Copilot Requests** → set to **Read**
-5. Click **Generate token** and copy the value
+2. Give it a name (e.g., `gh-aw-copilot-workshop`)
+3. Set a **short expiration** (e.g., 7 days — enough for the workshop)
+4. Under **Repository access**, select **Public repositories** (required for the Copilot Requests permission to appear — this works for private repos too)
+5. Click **Permissions** → **Account permissions** → find **Copilot Requests** → set to **Read**
+6. Click **Generate token** and copy the value
 
 ### Add the secret to your repository
 
@@ -168,6 +171,25 @@ Or 🌐 **on GitHub:**
 > 💡 **Why a PAT?** The `COPILOT_GITHUB_TOKEN` authenticates the Copilot CLI agent running inside GitHub Actions. The token owner's account must have an active Copilot license. See [gh-aw authentication docs](https://github.github.io/gh-aw/reference/auth/#copilot_github_token) for details.
 
 > ⚠️ **Organization-owned repos:** If your repository belongs to an organization, ensure the PAT has access to the repository. Go to **Organization settings** → **Personal access tokens** → **Pending requests** to approve if needed.
+
+### Security best practices for PATs
+
+Even though gh-aw requires a PAT for now, you can minimize risk:
+
+| Practice | Why |
+|----------|-----|
+| **Use fine-grained PATs** (not classic) | Scoped to specific permissions — only `Copilot Requests: Read` is needed |
+| **Set short expiration** | Limit the blast radius if the token leaks; rotate after workshops |
+| **Store as GitHub Actions secret** | Encrypted at rest, masked in logs, never exposed in workflow output |
+| **One token per repository** | Don't reuse tokens across repos; revoke when no longer needed |
+| **Revoke after the workshop** | Go to [**Settings** → **Developer settings** → **Fine-grained tokens**](https://github.com/settings/tokens?type=beta) and delete it |
+
+gh-aw also provides **defense-in-depth mitigations** even when using a PAT:
+- The agent runs with **read-only permissions** — writes go through the [safe-outputs](https://github.github.io/gh-aw/reference/safe-outputs/) pipeline
+- An **API proxy** holds the auth token outside the agent container, preventing exfiltration via prompt injection
+- **Secret redaction** automatically strips tokens from agent output
+- A **network firewall** restricts agent egress to an explicit domain allowlist
+- **Output sanitization** scans for leaked secrets before any write action executes
 
 ## 8.5 Set Up Your Issue Backlog
 
