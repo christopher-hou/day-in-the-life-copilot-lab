@@ -135,7 +135,41 @@ jobs:
 
 > ⚠️ **Why this works without compiling:** This repository ships with `generate-prd.lock.yml` already committed on `main`. For `create` events (branch/tag creation), GitHub Actions looks for workflow files **on the default branch**, not the branch being created. Since the lock file is already on `main`, creating a `feature/**` branch triggers the workflow immediately. If you were writing a *new* gh-aw workflow from scratch, you'd need to compile it and merge the `.lock.yml` to your default branch before the `create` trigger would fire.
 
-## 8.4 Set Up Your Issue Backlog
+## 8.4 Configure the `COPILOT_GITHUB_TOKEN` Secret
+
+gh-aw workflows use the Copilot CLI as their AI engine. To authenticate, you need a **fine-grained Personal Access Token (PAT)** stored as a repository secret.
+
+### Create the PAT
+
+🌐 **On GitHub:**
+
+1. Go to [**Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens**](https://github.com/settings/personal-access-tokens/new)
+2. Give it a name (e.g., `gh-aw-copilot`)
+3. Under **Repository access**, select **Public repositories** (required for the Copilot Requests permission to appear — this works for private repos too)
+4. Click **Permissions** → **Account permissions** → find **Copilot Requests** → set to **Read**
+5. Click **Generate token** and copy the value
+
+### Add the secret to your repository
+
+🖥️ **In your terminal** (fastest):
+
+```bash
+gh aw secrets set COPILOT_GITHUB_TOKEN --value "<your-token>"
+```
+
+Or 🌐 **on GitHub:**
+
+1. Go to your repository → **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret**
+3. Name: `COPILOT_GITHUB_TOKEN`
+4. Value: paste your PAT
+5. Click **Add secret**
+
+> 💡 **Why a PAT?** The `COPILOT_GITHUB_TOKEN` authenticates the Copilot CLI agent running inside GitHub Actions. The token owner's account must have an active Copilot license. See [gh-aw authentication docs](https://github.github.io/gh-aw/reference/auth/#copilot_github_token) for details.
+
+> ⚠️ **Organization-owned repos:** If your repository belongs to an organization, ensure the PAT has access to the repository. Go to **Organization settings** → **Personal access tokens** → **Pending requests** to approve if needed.
+
+## 8.5 Set Up Your Issue Backlog
 
 In a real development workflow, features come from **issues** — not thin air. This repository includes issue form templates and sample stories so you can practice the full issue → branch → PRD pipeline.
 
@@ -196,7 +230,7 @@ EOF
 3. **Assign it to yourself** by clicking "Assignees" on the right sidebar
 4. This is your story — you'll create a branch for it in the next section
 
-## 8.5 Create a Feature Branch
+## 8.6 Create a Feature Branch
 
 Now create a branch from your assigned issue to trigger the PRD workflow.
 
@@ -222,7 +256,7 @@ git push origin main:feature/add-course-prerequisites
 
 > ⏱️ The agent run typically takes 1-3 minutes. It reads the codebase, finds the linked issue, and generates the PRD with enriched context from your issue's user stories and acceptance criteria.
 
-## 8.6 Review the Generated PRD
+## 8.7 Review the Generated PRD
 
 After the workflow completes, the agent creates a **pull request** containing the PRD file.
 
@@ -250,7 +284,7 @@ After the workflow completes, the agent creates a **pull request** containing th
 
 > 💡 **Real-world use:** In production, this workflow replaces the manual PRD writing step. Teams create a branch, and the AI agent generates a first-draft PRD that the PM reviews and refines.
 
-## 8.7 Key Frontmatter Fields
+## 8.8 Key Frontmatter Fields
 
 Before moving on, let's solidify the frontmatter concepts:
 
@@ -263,7 +297,7 @@ Before moving on, let's solidify the frontmatter concepts:
 | `safe-outputs` | No | Named output actions the agent can perform (e.g., `create-pull-request`) |
 | `description` | No | Shown in the Actions UI |
 
-## 8.8 Final
+## 8.9 Final
 
 <details>
 <summary>Key Takeaways</summary>
