@@ -368,6 +368,28 @@ if (Test-Path .github/agents/dotnet-qa.agent.md) { "Already exists" } else { "Ne
 
 </details>
 
+> 💡 **Going further: Parallel sessions with Git worktrees.** The orchestration pattern in this lab is sequential — one agent finishes before the next starts, all within a single Copilot CLI session. But real-world development often benefits from true parallelism: one session implementing a feature while another writes tests or fixes a separate bug.
+>
+> The challenge is that two Copilot CLI sessions sharing the same working directory will step on each other — competing for the same files and git index. [Git worktrees](https://git-scm.com/docs/git-worktree) solve this by creating isolated checkouts that share history but have their own working directory:
+>
+> ```bash
+> # From your repo root, create a worktree for a second session
+> git worktree add ../contoso-tests -b feature/add-tests
+>
+> # Open a new terminal, cd into the worktree, and start Copilot CLI
+> cd ../contoso-tests
+> copilot
+>
+> # When finished, merge from your main working directory
+> cd ../day-in-the-life-copilot-lab
+> git merge feature/add-tests
+>
+> # Clean up the worktree
+> git worktree remove ../contoso-tests
+> ```
+>
+> You're the orchestrator in this pattern — you open the terminals, create the worktrees, and decide when to merge. Copilot CLI helps at every step: ask it to create the worktree, do the work in each session independently, and then use it to merge branches and resolve any conflicts. This scales naturally: three features in flight means three worktrees and three terminal tabs, each with its own Copilot session working in isolation.
+
 <details>
 <summary>Solution: lab-orchestrator.agent.md</summary>
 
