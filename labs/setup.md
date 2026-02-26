@@ -8,7 +8,7 @@ Complete this setup **before the session begins**. The labs assume your environm
 
 References:
 - [Fork a repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-- [GitHub Copilot CLI](https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line)
+- [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [GitHub Agentic Workflows](https://github.com/github/gh-aw)
 
@@ -19,7 +19,7 @@ Before starting the labs, ensure you have:
 1. **GitHub Account** with a Copilot license (Individual, Business, or Enterprise)
 2. **VS Code** with the [GitHub Copilot extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 3. **GitHub CLI** (`gh`) — [Install guide](https://cli.github.com/)
-4. **GitHub Copilot CLI** — Install the [Copilot CLI extension](https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line) for GitHub CLI: `gh extension install github/gh-copilot`
+4. **GitHub Copilot CLI** — Install the [Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli): `npm install -g @github/copilot`
 5. **GitHub Agentic Workflows CLI** — Install with: `gh extension install github/gh-aw`
 6. **.NET 8 SDK** — [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
 7. **Git** — [Install guide](https://git-scm.com/downloads)
@@ -86,7 +86,7 @@ gh auth status
 2. Verify Copilot CLI is installed:
 
 ```shell
-gh copilot --version
+copilot --version
 ```
 
 3. Verify Agentic Workflows CLI is installed:

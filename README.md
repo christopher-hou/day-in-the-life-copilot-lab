@@ -13,7 +13,7 @@ A comprehensive, hands-on lab teaching the **full GitHub Copilot agentic develop
 | **GitHub account** | With Copilot license (Individual, Business, or Enterprise) |
 | **VS Code** | Latest version with [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension |
 | **GitHub CLI** | [Install `gh`](https://cli.github.com/) — verify with `gh --version` |
-| **Copilot CLI** | [Install guide](https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line) — verify with `gh copilot --version` |
+| **Copilot CLI** | [Install guide](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) — install with `npm install -g @github/copilot`, verify with `copilot --version` |
 | **.NET 8 SDK** | [Download](https://dotnet.microsoft.com/download/dotnet/8.0) — verify with `dotnet --version` |
 | **Git** | [Install](https://git-scm.com/downloads) — configured with your GitHub credentials |
 | **gh-aw extension** | `gh extension install github/gh-aw` (for Labs 08–09) |
@@ -72,7 +72,7 @@ code .
 |-------|---------|----------|
 | .NET build | `dotnet build ContosoUniversity.sln` | `Build succeeded` |
 | Tests pass | `dotnet test ContosoUniversity.sln` | All tests pass |
-| Copilot CLI | `gh copilot --version` | Version number |
+| Copilot CLI | `copilot --version` | Version number |
 | Extensions | VS Code → Extensions panel | GitHub Copilot installed & signed in |
 
 ### 6. Start the labs
@@ -176,7 +176,7 @@ This repo ships with a rich set of configurations for you to explore and extend:
 | Run tests | `dotnet test ContosoUniversity.sln` |
 | Run web app | `dotnet run --project ContosoUniversity.Web` |
 | Run specific test | `dotnet test --filter "FullyQualifiedName~TestName"` |
-| Check Copilot CLI | `gh copilot --version` |
+| Check Copilot CLI | `copilot --version` |
 | Install gh-aw | `gh extension install github/gh-aw` |
 
 ---

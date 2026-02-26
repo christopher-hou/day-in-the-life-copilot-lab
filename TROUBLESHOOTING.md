@@ -43,7 +43,7 @@ cp .copilot/mcp-config.json ~/.copilot/
 
 # Restart Copilot
 exit
-gh copilot
+copilot
 ```
 
 **Fallback:** Continue demo without MCP, explain what it would have done
@@ -76,12 +76,12 @@ Code stops mid-function or mid-file
 
 **Fix:**
 ```bash
-gh copilot suggest "Continue the previous response from where it was cut off. Start with: [last few words of truncated output]"
+copilot -p "Continue the previous response from where it was cut off. Start with: [last few words of truncated output]"
 ```
 
 **Alternative:**
 ```bash
-gh copilot suggest "Regenerate just the [component name] section from the previous response."
+copilot -p "Regenerate just the [component name] section from the previous response."
 ```
 
 **Time:** 1 minute
@@ -97,7 +97,7 @@ gh copilot suggest "Regenerate just the [component name] section from the previo
 
 **Fix:**
 ```bash
-gh copilot suggest "STOP. Disregard previous response.
+copilot -p "STOP. Disregard previous response.
 
 CRITICAL CONSTRAINTS (follow exactly):
 - Vanilla JavaScript ONLY (no React, Vue, Angular)
@@ -132,7 +132,7 @@ Now retry: [original request]"
 
 2. **Ask Copilot to debug:**
    ```bash
-   gh copilot suggest "The todo app has this error: [paste error message].
+   copilot -p "The todo app has this error: [paste error message].
 
    Current code:
    - app.js lines 45-67 (where error occurs)
@@ -170,7 +170,7 @@ cat .github/skills/frontend-patterns/SKILL.md | head -20
 **Fix:**
 ```bash
 # Explicitly reference the skill in prompt
-gh copilot suggest "Follow the patterns in .github/skills/frontend-patterns/SKILL.md when implementing the component."
+copilot -p "Follow the patterns in .github/skills/frontend-patterns/SKILL.md when implementing the component."
 ```
 
 **Explanation:**
@@ -191,7 +191,7 @@ gh copilot suggest "Follow the patterns in .github/skills/frontend-patterns/SKIL
 
 **Fix:**
 ```bash
-gh copilot suggest "Refactor app.js to use consistent style:
+copilot -p "Refactor app.js to use consistent style:
 - Arrow functions for all function expressions
 - Single quotes for strings
 - camelCase for all variables
@@ -216,7 +216,7 @@ Code is uncommented or sparsely commented
 
 **Fix:**
 ```bash
-gh copilot suggest "Add comprehensive comments to app.js:
+copilot -p "Add comprehensive comments to app.js:
 - JSDoc for all functions
 - Inline comments for complex logic
 - Section headers for major blocks
@@ -298,7 +298,7 @@ cd ../demo-workspace
 
 ### Help Resources During Demo
 
-- **Copilot CLI Docs:** https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line
+- **Copilot CLI Docs:** https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli
 - **MCP Spec:** https://spec.modelcontextprotocol.io/
 - **This Repo's README:** ../README.md
 - **Presenter Notes:** ./DEMO_PRESENTER_NOTES.md
@@ -320,7 +320,7 @@ Run this **30 minutes before demo** to prevent issues:
 gh auth status
 
 # 2. Test Copilot
-gh copilot suggest "Hello, test message"
+copilot -p "Hello, test message"
 
 # 3. Check MCP
 cat ~/.copilot/mcp-config.json

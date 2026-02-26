@@ -293,7 +293,7 @@ Let's test the orchestrator with a small feature request.
 
 1. Start Copilot CLI:
 ```bash
-gh copilot
+copilot
 ```
 
 2. Invoke the orchestrator with a feature request:

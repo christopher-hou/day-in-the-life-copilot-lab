@@ -235,7 +235,7 @@ Let's test our new agent by asking it to analyze the ContosoUniversity codebase.
 
 1. Start Copilot CLI:
 ```bash
-gh copilot
+copilot
 ```
 
 2. Invoke the agent:

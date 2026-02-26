@@ -386,7 +386,7 @@ Let's verify the skill activates when discussing .NET testing.
 
 1. Start Copilot CLI:
 ```bash
-gh copilot
+copilot
 ```
 
 2. Ask a question that should trigger the `dotnet-testing` skill:

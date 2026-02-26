@@ -66,7 +66,7 @@ Context7 provides up-to-date documentation for libraries and frameworks. Let's u
 
 1. Start Copilot CLI:
 ```bash
-gh copilot
+copilot
 ```
 
 2. Ask a question that requires library documentation:
