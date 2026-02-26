@@ -19,7 +19,7 @@ Before starting the labs, ensure you have:
 1. **GitHub Account** with a Copilot license (Individual, Business, or Enterprise)
 2. **VS Code** with the [GitHub Copilot extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 3. **GitHub CLI** (`gh`) — [Install guide](https://cli.github.com/)
-4. **GitHub Copilot CLI** — Install via [one of the available methods](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-copilot-cli): `brew install copilot-cli` (macOS/Linux), `winget install GitHub.Copilot` (Windows), or `npm install -g @github/copilot`
+4. **GitHub Copilot CLI** — Install the [Copilot CLI extension](https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line) for GitHub CLI: `gh extension install github/gh-copilot`
 5. **GitHub Agentic Workflows CLI** — Install with: `gh extension install github/gh-aw`
 6. **.NET 8 SDK** — [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
 7. **Git** — [Install guide](https://git-scm.com/downloads)
@@ -60,6 +60,18 @@ Build succeeded.
     0 Warning(s)
     0 Error(s)
 ```
+
+6. _(Optional)_ Run the application:
+
+```shell
+dotnet run --project ContosoUniversity.Web
+```
+
+The app starts at **https://localhost:52379** (or http://localhost:52380). On first run, the database is automatically created and seeded with sample data.
+
+> **Note:** The Development configuration uses SQLite, which works on all platforms (Windows, macOS, Linux). The database file (`ContosoUniversity.db`) is created automatically. Production uses SQL Server.
+
+Press `Ctrl+C` to stop the application.
 
 ## S.2 Verify Copilot CLI
 
@@ -142,7 +154,7 @@ Get-Content AGENTS.md
 
 You now have:
 - A forked repository with all Copilot configurations
-- A building .NET project (ContosoUniversity)
+- A building .NET project (ContosoUniversity) — optionally verified running at https://localhost:52379
 - Copilot CLI and gh-aw CLI installed
 - An understanding of the repository structure
 

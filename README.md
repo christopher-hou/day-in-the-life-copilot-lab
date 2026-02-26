@@ -48,13 +48,25 @@ cd day-in-the-life-copilot-lab
 dotnet build ContosoUniversity.sln
 ```
 
-### 3. Open in VS Code
+### 3. Run the Application
+
+```bash
+dotnet run --project ContosoUniversity.Web
+```
+
+The app starts at **https://localhost:52379** (or http://localhost:52380). On first run, the database is automatically created and seeded with sample data (students, courses, instructors, departments).
+
+> **Note:** The Development configuration uses SQLite, which works on all platforms (Windows, macOS, Linux). The database file (`ContosoUniversity.db`) is created automatically in the web project directory. Production uses SQL Server.
+
+Press `Ctrl+C` to stop the application.
+
+### 4. Open in VS Code
 
 ```bash
 code .
 ```
 
-### 4. Verify
+### 5. Verify
 
 | Check | Command | Expected |
 |-------|---------|----------|
@@ -63,7 +75,7 @@ code .
 | Copilot CLI | `gh copilot --version` | Version number |
 | Extensions | VS Code → Extensions panel | GitHub Copilot installed & signed in |
 
-### 5. Start the labs
+### 6. Start the labs
 
 Open [`labs/setup.md`](labs/setup.md) and follow the instructions.
 
