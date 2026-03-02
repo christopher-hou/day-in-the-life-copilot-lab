@@ -26,6 +26,8 @@ Before starting the labs, ensure you have:
 
 ## S.1 Fork and Clone the Repository
 
+> **GitHub EMU users:** If your organization uses a [GitHub Enterprise Managed Users (EMU)](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/understanding-iam-for-enterprises/about-enterprise-managed-users) license and you **cannot fork** external repositories, skip to **[S.1b](#s1b-clone-into-your-own-namespace-github-emu-users)** below.
+
 🌐 **On GitHub:**
 
 1. Fork this repository: [day-in-the-life-copilot-lab](https://github.com/YOUR-ORG/day-in-the-life-copilot-lab)
@@ -73,27 +75,128 @@ The app starts at **https://localhost:52379** (or http://localhost:52380). On fi
 
 Press `Ctrl+C` to stop the application.
 
+## S.1b Clone into Your Own Namespace (GitHub EMU Users)
+
+> **Who is this for?** If your organization uses a [GitHub Enterprise Managed Users (EMU)](https://docs.github.com/en/enterprise-cloud@latest/admin/identity-and-access-management/understanding-iam-for-enterprises/about-enterprise-managed-users) license, you **cannot fork** repositories that live outside your enterprise. Follow the steps below to create a copy of this repository in your own GitHub namespace instead.
+
+🌐 **On GitHub:**
+
+1. Navigate to [github.com/new](https://github.com/new) to create a new repository
+2. Set the **Owner** to your EMU account (e.g., `YOUR-USERNAME_ENTERPRISE`)
+3. Name the repository `day-in-the-life-copilot-lab`
+4. Set visibility to **Private** (or Internal, per your organization's policy)
+5. **Do not** initialize the repository with a README, `.gitignore`, or license
+6. Click **Create repository**
+7. After you have pushed the lab content from your local clone to this repository (see the **On your machine** steps below), go to your repository's **Settings** → **Actions** → **General** and ensure Actions are enabled, then go to the **Actions** tab and click _"I understand my workflows, go ahead and enable them"_ if prompted
+
+🖥️ **On your machine:**
+
+1. Clone the source repository:
+
+**WSL/Bash:**
+```bash
+git clone https://github.com/YOUR-ORG/day-in-the-life-copilot-lab.git
+cd day-in-the-life-copilot-lab
+```
+
+**PowerShell:**
+```powershell
+git clone https://github.com/YOUR-ORG/day-in-the-life-copilot-lab.git
+Set-Location day-in-the-life-copilot-lab
+```
+
+2. Change the remote `origin` to point to **your** new repository:
+
+**WSL/Bash:**
+```bash
+git remote set-url origin https://github.com/YOUR-USERNAME_ENTERPRISE/day-in-the-life-copilot-lab.git
+```
+
+**PowerShell:**
+```powershell
+git remote set-url origin https://github.com/YOUR-USERNAME_ENTERPRISE/day-in-the-life-copilot-lab.git
+```
+
+3. Push all branches and tags to your new repository:
+
+**WSL/Bash:**
+```bash
+git push --all origin
+git push --tags origin
+```
+
+**PowerShell:**
+```powershell
+git push --all origin
+git push --tags origin
+```
+
+4. Verify the .NET project builds:
+
+```shell
+dotnet build ContosoUniversity.sln
+```
+
+You should see something similar to:
+```
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+```
+
+5. _(Optional)_ Run the application:
+
+```shell
+dotnet run --project ContosoUniversity.Web
+```
+
+The app starts at **https://localhost:52379** (or http://localhost:52380). Press `Ctrl+C` to stop.
+
+> **Tip:** If you want to keep your copy in sync with the original source repository, you can add it as an `upstream` remote:
+>
+> ```shell
+> git remote add upstream https://github.com/YOUR-ORG/day-in-the-life-copilot-lab.git
+> git fetch upstream
+> git merge upstream/main
+> ```
+
+Once complete, continue with **S.2** below. The remaining labs work identically whether you forked or cloned.
+
+---
+
 ## S.2 Verify Copilot CLI
 
 🖥️ **On your machine:**
 
-1. Verify GitHub CLI is authenticated:
-
-```shell
-gh auth status
-```
-
-2. Verify Copilot CLI is installed:
+1. Verify Copilot CLI is installed:
 
 ```shell
 copilot --version
 ```
 
-3. Verify Agentic Workflows CLI is installed:
+2. Authenticate the Copilot CLI:
 
 ```shell
-gh aw --version
+copilot login
 ```
+
+> **Note:** The Copilot CLI has its own authentication — it does **not** use `gh auth`. Running `copilot login` opens a browser-based device code flow. Alternatively, you can set a `GH_TOKEN` environment variable with a fine-grained PAT that has the **Copilot Requests** permission.
+
+3. Verify Copilot CLI is authenticated by sending a test prompt:
+
+```shell
+copilot -p "hello"
+```
+
+If authenticated, you'll receive a response. If not, the CLI will prompt you to log in.
+
+4. Verify Agentic Workflows CLI is installed:
+
+```shell
+gh aw version
+```
+
+> **Note:** The `gh aw` extension relies on `gh auth` for GitHub API access (via the GitHub CLI). Run `gh auth status` if you need to verify your GitHub CLI authentication separately.
 
 ## S.3 Explore the Repository Structure
 
@@ -155,12 +258,12 @@ Get-Content AGENTS.md
 You now have:
 - A forked repository with all Copilot configurations
 - A building .NET project (ContosoUniversity) — optionally verified running at https://localhost:52379
-- Copilot CLI and gh-aw CLI installed
+- Copilot CLI authenticated and gh-aw CLI installed
 - An understanding of the repository structure
 
 ## Opening: The Art of the Possible (for presenter)
 
-Before Lab 01, the session opens with a **1-minute video** showing the session broker — a multi-agent coordination platform built entirely with the building blocks covered in these labs:
+*Optional:* Before Lab 01, the session opens with a **1-minute video** showing the session broker — a multi-agent coordination platform built entirely with the building blocks covered in these labs:
 
 - **Terminal 1 (Orchestrator):** Receives a feature request, decomposes it into tasks, assigns work to team members via MCP tools
 - **Terminal 2 (Dev Agent):** Picks up the implementation task, declares file intents, writes code, signals completion through the broker
