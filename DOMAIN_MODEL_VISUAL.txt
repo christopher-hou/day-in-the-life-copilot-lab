@@ -1,0 +1,374 @@
+================================================================================
+                  CONTOSOUNIVERSITY CORE DOMAIN MODEL
+                         VISUAL REFERENCE GUIDE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         COMPLETE ENTITY MAP                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                            ┌──────────────────┐
+                            │     PERSON       │ ← Abstract Base Class
+                            │ ─────────────────│
+                            │ ID (PK)          │
+                            │ LastName         │
+                            │ FirstMidName     │
+                            │ FullName (calc)  │
+                            └────┬─────────────┘
+                                 │ Inheritance (STI)
+                        ┌────────┴────────────┐
+                        │                     │
+         ┌──────────────▼────────────┐   ┌────▼──────────────────┐
+         │        STUDENT            │   │     INSTRUCTOR        │
+         │──────────────────────────│   │───────────────────────│
+         │ ID (FK→Person)           │   │ ID (FK→Person)        │
+         │ EnrollmentDate ★          │   │ HireDate ★            │
+         │ Enrollments[*]           │   │ CourseAssignments[*]  │
+         │                          │   │ OfficeAssignment[0..1]│
+         │ (extends Person)         │   │ (extends Person)      │
+         └──────────────┬───────────┘   └────────┬──────────────┘
+                        │                        │
+            StudentID (FK)                InstructorID (FK)
+                        │                        │
+                    ┌───┴────────────┐    ┌──────┴────────────┐
+                    │                │    │                   │
+         ┌──────────▼──────────────┐ │    │  ┌────────────────▼──┐
+         │   ENROLLMENT            │ │    │  │ COURSEASSIGNMENT  │
+         │ ──────────────────────│ │    │  │ ───────────────────│
+         │ EnrollmentID (PK)     │ │    │  │ InstructorID (PK, │
+         │ StudentID (FK, PK)◄───┼─┘    │  │   FK)             │
+         │ CourseID (FK, PK) ────┼──┐   │  │ CourseID (PK, FK) │
+         │ Grade: A|B|C|D|F|null │  │   │  │                   │
+         └───────────────────────┘  │   │  │ (Pure junction)   │
+                                    │   │  └────────────┬──────┘
+                  CourseID (FK)─────┘   │               │
+                                        │         CourseID (FK)
+                                        │               │
+                                   ┌────▼───────────────▼──────┐
+                                   │        COURSE             │
+                                   │───────────────────────────│
+                                   │ CourseID (PK)             │
+                                   │   [NOT auto-generated]    │
+                                   │ Title (3-50 chars)        │
+                                   │ Credits (0-5) ★           │
+                                   │ DepartmentID (FK) ◄───┐   │
+                                   │ TeachingMaterialPath  │   │
+                                   │                       │   │
+                                   │ Enrollments[*]        │   │
+                                   │ CourseAssignments[*]  │   │
+                                   └───────────────────────┼───┘
+                                                           │
+                                                           │
+                                        DepartmentID (FK)  │
+                                                           │
+                                    ┌──────────────────────▼───┐
+                                    │      DEPARTMENT          │
+                                    │──────────────────────────│
+                                    │ DepartmentID (PK)        │
+                                    │ Name ★ [Validation]      │
+                                    │ Budget ★ [Validation]    │
+                                    │ StartDate ★ [Validation] │
+                                    │ DepartmentType           │
+                                    │ InstructorID (FK, 0..1)  │
+                                    │ RowVersion (Concurrency) │
+                                    │                          │
+                                    │ Courses[*]               │
+                                    │ Administrator (Instr)    │
+                                    └──────────────────────────┘
+                                              ▲
+                                              │
+                                 InstructorID (FK, optional)
+
+
+                  ┌─────────────────────────────────────────┐
+                  │    INSTRUCTOR ──(has 0..1)── OFFICE    │
+                  │                                        │
+                  └─────────────────────────────────────────┘
+                              │
+                              │ Shared PK
+                              │ InstructorID = PK
+                              │
+                        ┌─────▼──────────────────┐
+                        │  OFFICEASSIGNMENT      │
+                        │──────────────────────│
+                        │ InstructorID (PK=FK)   │
+                        │ Location (50 chars)    │
+                        └────────────────────────┘
+
+
+                    ┌────────────────────────────────────┐
+                    │ NOTIFICATION (Independent Audit)   │
+                    │────────────────────────────────────│
+                    │ Id (PK)                            │
+                    │ EntityType (e.g., "Student")       │
+                    │ EntityId (entity's ID)             │
+                    │ Operation (CREATE|UPDATE|DELETE)   │
+                    │ Message (human-readable)           │
+                    │ CreatedAt (timestamp)              │
+                    │ CreatedBy (optional username)      │
+                    │ IsRead (bool)                      │
+                    │ ReadAt (optional timestamp)        │
+                    └────────────────────────────────────┘
+
+
+Legend:
+  ★    = Has custom validation
+  PK   = Primary Key
+  FK   = Foreign Key
+  [*]  = One-to-Many relationship
+  [0..1] = Zero-to-One relationship
+  [n:m] = Many-to-Many relationship
+  ◄─   = Navigation property points to this entity
+
+================================================================================
+                            RELATIONSHIP SUMMARY
+================================================================================
+
+  STUDENT                          COURSE
+     ├── (1:*)                       ├── (1:*)
+     │                               │
+     └── ENROLLMENT ────────────────┘
+     
+         ↓ Payload
+         Grade: A|B|C|D|F|null
+
+  INSTRUCTOR                       COURSE
+     ├── (1:*)                       ├── (1:*)
+     │                               │
+     └── COURSEASSIGNMENT ──────────┘
+     
+         ↓ No additional data
+
+  DEPARTMENT ──(1:*)──> COURSE ──> belongs to department
+
+  DEPARTMENT <──(0..1) INSTRUCTOR (as Administrator)
+
+  INSTRUCTOR ──(0..1)──> OFFICEASSIGNMENT (shared PK)
+
+  PERSON (abstract)
+     ├── STUDENT (specialization)
+     └── INSTRUCTOR (specialization)
+
+
+================================================================================
+                         AGGREGATE ROOT DIAGRAM
+================================================================================
+
+AGGREGATE 1: DEPARTMENT (Root)
+┌─────────────────────────────────────────────┐
+│ DEPARTMENT (controls lifecycle)            │
+│   ├─ Name, Budget, StartDate, Type         │
+│   ├─ InstructorID (may have admin)         │
+│   ├─ RowVersion (concurrency control)      │
+│   └─ Courses[*] (owned)                    │
+│       ├─ Title, Credits, TeachingMaterial │
+│       ├─ Enrollments[*] (not owned)        │
+│       └─ CourseAssignments[*] (not owned)  │
+└─────────────────────────────────────────────┘
+
+
+AGGREGATE 2: STUDENT (Root)
+┌──────────────────────────────────┐
+│ STUDENT (controls lifecycle)    │
+│   ├─ ID, LastName, FirstMidName │
+│   ├─ EnrollmentDate              │
+│   └─ Enrollments[*] (owned)      │
+│       ├─ Grade                   │
+│       └─ Course (references)     │
+└──────────────────────────────────┘
+
+
+AGGREGATE 3: INSTRUCTOR (Root)
+┌────────────────────────────────────────┐
+│ INSTRUCTOR (controls lifecycle)       │
+│   ├─ ID, LastName, FirstMidName       │
+│   ├─ HireDate                         │
+│   ├─ CourseAssignments[*] (owned)    │
+│   │   └─ Course (references)          │
+│   ├─ OfficeAssignment[0..1] (owned)  │
+│   │   └─ Location                     │
+│   └─ May be Administrator of Dept     │
+└────────────────────────────────────────┘
+
+
+AGGREGATE 4: COURSE (Root)
+┌──────────────────────────────────────┐
+│ COURSE (controls lifecycle)         │
+│   ├─ CourseID, Title, Credits        │
+│   ├─ DepartmentID (references)       │
+│   ├─ TeachingMaterialPath            │
+│   ├─ Enrollments[*] (not owned)      │
+│   │   └─ Student (references)        │
+│   └─ CourseAssignments[*] (not own) │
+│       └─ Instructor (references)    │
+└──────────────────────────────────────┘
+
+
+AGGREGATE 5: ENROLLMENT (Weak Root)
+┌──────────────────────────────┐
+│ ENROLLMENT (depends on both) │
+│   ├─ StudentID (FK)          │
+│   ├─ CourseID (FK)           │
+│   └─ Grade                   │
+└──────────────────────────────┘
+
+
+AGGREGATE 6: OFFICEASSIGNMENT (Micro Root)
+┌──────────────────────────────┐
+│ OFFICEASSIGNMENT (micro)    │
+│   ├─ InstructorID (PK=FK)    │
+│   └─ Location                │
+└──────────────────────────────┘
+
+
+AGGREGATE 7: NOTIFICATION (Independent Root)
+┌──────────────────────────────────┐
+│ NOTIFICATION (audit log)        │
+│   ├─ EntityType                  │
+│   ├─ EntityId                    │
+│   ├─ Operation                   │
+│   ├─ Message                     │
+│   ├─ CreatedAt, CreatedBy        │
+│   └─ IsRead, ReadAt              │
+└──────────────────────────────────┘
+
+================================================================================
+                         VALIDATION REQUIREMENTS
+================================================================================
+
+DEPARTMENT:
+  ★ Name:        Required, 3-50 chars, start with letter
+                 Cannot contain: Test, Demo, Sample, Temp
+  ★ Budget:      0-10M, varies by type:
+                   Academic: 50K-5M
+                   Admin: 100K-10M
+                   Research: 200K-20M
+  ★ StartDate:   Required, not more than 5 years in future
+  
+COURSE:
+  ★ Credits:     0-5 range
+  ★ Title:       Required, 3-50 chars
+  
+STUDENT:
+  ★ EnrollmentDate: Required, range 1753-9999
+  
+INSTRUCTOR:
+  ★ HireDate:    Required, range 1753-9999
+
+
+================================================================================
+                         DATA INTEGRITY RULES
+================================================================================
+
+CASCADE DELETES:
+  • Delete DEPARTMENT → Delete all its COURSES
+  • Delete COURSE → Delete all its ENROLLMENTS & COURSEASSIGNMENTS
+  • Delete STUDENT → Delete all its ENROLLMENTS
+  • Delete INSTRUCTOR → Delete COURSEASSIGNMENTS & OFFICEASSIGNMENT
+
+REQUIRED FOREIGN KEYS (NOT NULL):
+  • Course.DepartmentID
+  • Enrollment.StudentID
+  • Enrollment.CourseID
+
+OPTIONAL FOREIGN KEYS (NULL allowed):
+  • Department.InstructorID (may not have administrator)
+  • Instructor.OfficeAssignmentID (implied by shared PK)
+
+UNIQUE CONSTRAINTS:
+  • Course.CourseID (unique identifier)
+  • Enrollment: (StudentID, CourseID) composite unique
+  • CourseAssignment: (InstructorID, CourseID) composite unique
+  • OfficeAssignment.InstructorID (one-to-one via shared PK)
+
+CONCURRENCY CONTROL:
+  • Department.RowVersion [Timestamp]
+    → Prevents lost updates
+    → Throws ConcurrencyException if version mismatch
+
+
+================================================================================
+                       NAVIGATION EXAMPLES
+================================================================================
+
+Get student's courses and grades:
+  student.Enrollments          ← Collection<Enrollment>
+  ├─ [0].Course                ← Navigate to Course
+  ├─ [0].Course.Title          ← Get course name
+  ├─ [0].Grade                 ← Get grade (A|B|C|D|F|null)
+  └─ [n]...                    ← Multiple enrollments
+
+Get course's instructors:
+  course.CourseAssignments     ← Collection<CourseAssignment>
+  ├─ [0].Instructor            ← Navigate to Instructor
+  ├─ [0].Instructor.FullName   ← Get instructor name
+  └─ [n]...                    ← Multiple instructors
+
+Get department's courses and students:
+  dept.Courses                 ← Collection<Course>
+  ├─ [0].Enrollments           ← Get enrollments in course
+  │   ├─ [0].Student           ← Navigate to Student
+  │   ├─ [0].Student.FullName  ← Get student name
+  │   └─ [m]...                ← Multiple enrollments
+  └─ [k]...                    ← Multiple courses
+
+Get instructor's office:
+  instructor.OfficeAssignment  ← OfficeAssignment (nullable)
+  └─ .Location                 ← Get office location
+
+
+================================================================================
+                        ENTITY STATISTICS
+================================================================================
+
+Total Entities:              9 (+ 1 abstract, + 2 enums)
+Aggregate Roots:             7
+Junction Tables:             2 (Enrollment, CourseAssignment)
+One-to-Many Relationships:   4
+Many-to-Many Relationships:  2 (via junction)
+One-to-One Relationships:    2
+Inheritance Hierarchies:     1 (Person → Student/Instructor)
+Custom Validators:           3
+Service Interfaces:          3
+Properties with Validation:  20+
+Navigation Properties:       12+
+
+
+================================================================================
+                     QUICK REFERENCE: KEY CONSTRAINTS
+================================================================================
+
+Course.Credits           → Range: 0-5
+Department.Budget       → Range: 0-10,000,000
+Course.Title            → StringLength: 3-50
+Department.Name         → StringLength: 3-50
+OfficeAssignment.Loc.   → StringLength: 0-50
+Person.LastName         → StringLength: 0-50
+Person.FirstMidName     → StringLength: 0-50
+Department.StartDate    → Max 5 years in future
+Enrollment.Grade        → Enum: A, B, C, D, F, null
+Department.Type         → Academic, Administrative, Research
+
+
+================================================================================
+                         FEATURES SUMMARY
+================================================================================
+
+✅ Single Table Inheritance (STI) for Person → Student/Instructor
+✅ Multiple Many-to-Many relationships (Enrollment, CourseAssignment)
+✅ Shared Primary Key for one-to-one (OfficeAssignment)
+✅ Nullable Foreign Keys for optional relationships
+✅ Custom Validation Attributes (name, budget, date)
+✅ Computed Properties (Person.FullName)
+✅ Enum Types (Grade, EntityOperation)
+✅ Timestamp Versioning (Department.RowVersion)
+✅ Audit Logging (Notification entity)
+✅ Repository Pattern (IRepository<T>)
+✅ Async Service Interfaces
+✅ File Storage Service (IFileStorageService)
+✅ Notification Service (INotificationService)
+
+
+================================================================================
+                  END OF VISUAL REFERENCE GUIDE
+================================================================================

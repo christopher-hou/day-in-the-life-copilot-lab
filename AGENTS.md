@@ -90,3 +90,18 @@ The .NET project models a university system with these entities:
 - Hardcode secrets or API keys in any configuration file
 - Use `git add .` or `git add -A`
 - Create unnecessary documentation files
+
+## Architecture Decisions
+
+### ADR-001: Repository Pattern for Data Access
+
+**Status**: Accepted
+
+**Context**: Controllers need database access but should not depend directly on Entity Framework's `SchoolContext`.
+
+**Decision**: All data access goes through `IRepository<T>` defined in `ContosoUniversity.Core`. Implementations live in `ContosoUniversity.Infrastructure`.
+
+**Consequences**:
+- Controllers are testable with mock repositories
+- Database technology can be swapped without changing controllers
+- All queries go through a single abstraction layer
